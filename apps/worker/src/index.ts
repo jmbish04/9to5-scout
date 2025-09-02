@@ -121,7 +121,17 @@ export default {
 
     try {
       if (url.pathname === '/api/cover-letter') {
-        const result = CoverLetterRequestSchema.safeParse(await request.json());
+        let json: unknown;
+        try {
+          json = await request.json();
+        } catch {
+          return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+
+        const result = CoverLetterRequestSchema.safeParse(json);
         if (!result.success) {
           return new Response(
             JSON.stringify({ error: 'Invalid request body', issues: result.error.issues }),
@@ -185,7 +195,17 @@ export default {
       }
 
       if (url.pathname === '/api/resume') {
-        const result = ResumeRequestSchema.safeParse(await request.json());
+        let json: unknown;
+        try {
+          json = await request.json();
+        } catch {
+          return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+
+        const result = ResumeRequestSchema.safeParse(json);
         if (!result.success) {
           return new Response(
             JSON.stringify({ error: 'Invalid request body', issues: result.error.issues }),
