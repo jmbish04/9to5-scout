@@ -121,18 +121,31 @@ export default {
     const url = new URL(request.url);
 
     try {
-        if (url.pathname === '/api/cover-letter') {
-          const result = CoverLetterRequestSchema.safeParse(await request.json());
-          if (!result.success) {
-            return new Response(
-              JSON.stringify({ error: 'Invalid request body', issues: result.error.issues }),
-              {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' },
-              },
-            );
-          }
-          const body = result.data;
+      if (url.pathname === '/api/cover-letter') {
+        let payload;
+        try {
+          payload = await request.json();
+        } catch (error) {
+          return new Response(
+            JSON.stringify({ error: 'Invalid JSON in request body' }),
+            {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            },
+          );
+        }
+
+        const result = CoverLetterRequestSchema.safeParse(payload);
+        if (!result.success) {
+          return new Response(
+            JSON.stringify({ error: 'Invalid request body', issues: result.error.issues }),
+            {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            },
+          );
+        }
+        const body = result.data;
 
         const coverLetterSchema = {
           type: 'object',
@@ -186,7 +199,20 @@ export default {
       }
 
       if (url.pathname === '/api/resume') {
-        const result = ResumeRequestSchema.safeParse(await request.json());
+        let payload;
+        try {
+          payload = await request.json();
+        } catch (error) {
+          return new Response(
+            JSON.stringify({ error: 'Invalid JSON in request body' }),
+            {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            },
+          );
+        }
+
+        const result = ResumeRequestSchema.safeParse(payload);
         if (!result.success) {
           return new Response(
             JSON.stringify({ error: 'Invalid request body', issues: result.error.issues }),
