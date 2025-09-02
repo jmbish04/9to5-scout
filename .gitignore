@@ -138,8 +138,12 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# macOS files
+
 .DS_Store
 
 # Worker build output
 apps/worker/dist
+
+
+.wrangler/
+
