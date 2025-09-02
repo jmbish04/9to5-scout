@@ -1,19 +1,23 @@
 {
-  "name": "@job-scraper/worker",
+  "name": "9to5-scout",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "generate-types": "wrangler types",
     "typecheck": "pnpm generate-types && tsc -p tsconfig.json",
     "build": "pnpm generate-types && wrangler build",
-    "dev": "wrangler dev"
+    "dev": "wrangler dev",
+    "migrate:local": "wrangler d1 migrations apply DB --local",
+    "migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "deploy": "pnpm run migrate:remote && wrangler deploy"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
     "typescript": "^5.4.0",
-    "wrangler": "^3.61.0"
+    "wrangler": "4.33.1"
   },
   "dependencies": {
     "zod": "^4.1.5"
   }
 }
+
