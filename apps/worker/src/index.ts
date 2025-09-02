@@ -126,11 +126,12 @@ export default {
         try {
           json = await request.json();
         } catch {
-          return new Response(
-            JSON.stringify({ error: 'Malformed JSON body' }),
-            { status: 400, headers: { 'Content-Type': 'application/json' } },
-          );
+          return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
         }
+
         const result = CoverLetterRequestSchema.safeParse(json);
         if (!result.success) {
           return new Response(
@@ -199,11 +200,12 @@ export default {
         try {
           json = await request.json();
         } catch {
-          return new Response(
-            JSON.stringify({ error: 'Malformed JSON body' }),
-            { status: 400, headers: { 'Content-Type': 'application/json' } },
-          );
+          return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
         }
+
         const result = ResumeRequestSchema.safeParse(json);
         if (!result.success) {
           return new Response(
