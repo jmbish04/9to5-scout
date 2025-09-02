@@ -13,7 +13,7 @@ type DurableObjectState = any;
 const CoverLetterRequestSchema = z.object({
   job_title: z.string().min(1),
   company_name: z.string().min(1),
-  hiring_manager_name: z.string().optional(),
+  hiring_manager_name: z.string().min(1).optional(),
   job_description_text: z.string().min(1),
   candidate_career_summary: z.string().min(1),
 });
