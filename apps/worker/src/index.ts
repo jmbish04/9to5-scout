@@ -121,7 +121,7 @@ export default {
     const url = new URL(request.url);
 
     try {
-        if (url.pathname === '/api/cover-letter') {
+      if (url.pathname === '/api/cover-letter') {
           const result = CoverLetterRequestSchema.safeParse(await request.json());
           if (!result.success) {
             return new Response(
