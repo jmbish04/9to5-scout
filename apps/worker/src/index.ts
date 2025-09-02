@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 // Placeholder types for Durable Objects until full implementations are added.
 type DurableObjectState = any;
 
@@ -6,15 +8,16 @@ type DurableObjectState = any;
  */
 
 /**
- * Describes the request payload expected for cover letter generation.
+ * Schema for validating cover letter generation requests.
  */
-interface CoverLetterRequestBody {
-  job_title: string;
-  company_name: string;
-  hiring_manager_name?: string;
-  job_description_text: string;
-  candidate_career_summary: string;
-}
+const CoverLetterRequestSchema = z.object({
+  job_title: z.string().min(1),
+  company_name: z.string().min(1),
+  hiring_manager_name: z.string().optional(),
+  job_description_text: z.string().min(1),
+  candidate_career_summary: z.string().min(1),
+});
+type CoverLetterRequestBody = z.infer<typeof CoverLetterRequestSchema>;
 
 /**
  * Represents structured cover letter content returned by the AI model.
@@ -28,14 +31,15 @@ interface CoverLetterContent {
 }
 
 /**
- * Defines the request payload for resume generation.
+ * Schema for validating resume generation requests.
  */
-interface ResumeRequestBody {
-  job_title: string;
-  company_name: string;
-  job_description_text: string;
-  candidate_career_summary: string;
-}
+const ResumeRequestSchema = z.object({
+  job_title: z.string().min(1),
+  company_name: z.string().min(1),
+  job_description_text: z.string().min(1),
+  candidate_career_summary: z.string().min(1),
+});
+type ResumeRequestBody = z.infer<typeof ResumeRequestSchema>;
 
 /**
  * Represents structured resume content returned by the AI model.
@@ -46,12 +50,6 @@ interface ResumeContent {
   skills: string[];
 }
 
-/**
- * Environment bindings made available to the Worker at runtime.
- */
-export interface Env {
-  AI: any;
-}
 
 /**
  * Durable Object coordinating crawling operations for a specific site.
@@ -123,13 +121,17 @@ export default {
 
     try {
       if (url.pathname === '/api/cover-letter') {
-        const body = (await request.json()) as CoverLetterRequestBody;
-        if (!body.job_title || !body.company_name || !body.job_description_text || !body.candidate_career_summary) {
-          return new Response(JSON.stringify({ error: 'Missing required fields in request body' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-          });
+        const result = CoverLetterRequestSchema.safeParse(await request.json());
+        if (!result.success) {
+          return new Response(
+            JSON.stringify({ error: 'Invalid request body', issues: result.error.issues }),
+            {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            },
+          );
         }
+        const body = result.data;
 
         const coverLetterSchema = {
           type: 'object',
@@ -183,13 +185,17 @@ export default {
       }
 
       if (url.pathname === '/api/resume') {
-        const body = (await request.json()) as ResumeRequestBody;
-        if (!body.job_title || !body.company_name || !body.job_description_text || !body.candidate_career_summary) {
-          return new Response(JSON.stringify({ error: 'Missing required fields in request body' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-          });
+        const result = ResumeRequestSchema.safeParse(await request.json());
+        if (!result.success) {
+          return new Response(
+            JSON.stringify({ error: 'Invalid request body', issues: result.error.issues }),
+            {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            },
+          );
         }
+        const body = result.data;
 
         const resumeSchema = {
           type: 'object',
