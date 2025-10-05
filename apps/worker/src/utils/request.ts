@@ -6,7 +6,7 @@ export async function getJsonPayload(
   try {
     const payload = await request.json();
     return { payload, errorResponse: null };
-  } catch {
+  } catch (error) {
     const errorResponse = new Response(
       JSON.stringify({ error: 'Invalid JSON in request body' }),
       { status: 400, headers: { 'Content-Type': 'application/json' } },
